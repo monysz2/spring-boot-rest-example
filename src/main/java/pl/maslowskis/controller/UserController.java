@@ -1,35 +1,32 @@
 package pl.maslowskis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import pl.maslowskis.entity.User;
 import pl.maslowskis.entity.request.AddUserRequest;
 import pl.maslowskis.repository.UserRepository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by oro-6 on 3/12/2018.
  */
-@RestController
-
+@Controller
+@RequestMapping("/users")
 public class UserController {
     private UserRepository userRepository;
 
 
-    @GetMapping("/")
-    public String home(ModelMap modelMap)
-    {
-        modelMap.put("hello","Witaj swiecie");
+    @RequestMapping("/hello")
+    public String hello(Model model, @RequestParam(value="name", required=false, defaultValue="World") String name) {
+        model.addAttribute("name", name);
         return "hello";
-    }
-
-    @RequestMapping("/users")
-    public String helloMessage()
-    {
-        return "Hello World!";
     }
 
     @Autowired
@@ -37,12 +34,16 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public List<User> findAllUsers()
-    {
-        return userRepository.findAll();
+    @GetMapping
+    public ModelAndView getAllUsers(Model model) {
+       ModelAndView modelAndView = new ModelAndView();
+       modelAndView.setViewName("hello.html");
+       modelAndView.addObject("dupa", "dupa");
+
+       return modelAndView;
     }
-    @RequestMapping(method = RequestMethod.POST)
+
+    @PostMapping
     public void addUser(@RequestBody AddUserRequest addUserRequest)
     {
         User user = new User();
